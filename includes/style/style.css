@@ -1,0 +1,350 @@
+/* Basic reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* 
+    Color Palette based on the "Harmony Hub" Music Shop Theme:
+    - Primary (Header/Footer/Text): #4A2C5A (Deep Plum)
+    - Accent/Header text color: #8A824C (Golden Olive)
+    - Call-to-Action (Buttons): #00826B (Vibrant Teal)
+    - Neutral Background: #EDE6D6 (Warm Cream)
+    - Page Background: #F5F1E9 (Lighter Cream for main page area)
+    - Detail/Shadow: #DDF5E6 (Subtle Detail) - Note: A dark shadow will be used instead for better contrast.
+  */
+  --primary-color: #4A2C5A;
+  --accent-color: #8A824C;
+  --cta-color: #00826B;
+  --neutral-bg: #EDE6D6;
+  --page-bg: #F5F1E9;
+  --light-text: #F5F1E9; /* Using page background as light text color */
+  --dark-text: #2c1a34;  /* A darker version of the primary for body text */
+}
+
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background: var(--page-bg);
+  color: var(--dark-text);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* --- Header --- */
+.site-header {
+  background: var(--primary-color);
+  color: var(--light-text);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.site-header .container {
+  height: 70px;
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--light-text);
+  text-decoration: none;
+  font-size: 1.5rem;
+}
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  font-size: 1.25rem;
+  color: var(--light-text);
+  cursor: pointer;
+}
+
+.main-nav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.nav-list a {
+  color: var(--light-text);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.nav-list a:hover, .nav-list a.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Dropdown Menu */
+.has-dropdown {
+  position: relative;
+}
+
+.drop-btn {
+  background: transparent;
+  border: 0;
+  color: var(--light-text);
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: inherit; /* Inherit font size from nav links */
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 30;
+}
+
+.has-dropdown.open .dropdown {
+  display: block;
+}
+
+.dropdown li {
+  list-style: none;
+}
+
+.dropdown a {
+  display: block;
+  padding: 8px 12px;
+  color: var(--dark-text);
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.dropdown a:hover {
+  background: var(--page-bg);
+  color: var(--primary-color);
+}
+
+/* Search and Auth Links */
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-form input[type=search] {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  min-width: 200px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #222;
+}
+.search-form input[type=search]:focus {
+  outline: 2px solid var(--cta-color);
+}
+
+.search-form button {
+  background: var(--cta-color);
+  color: #fff;
+  border: 0;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.search-form button:hover {
+  background: #006958;
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.auth-links .drop-btn {
+    font-size: 1.6rem;
+}
+.auth-links .dropdown {
+    left: auto;
+    right: 0;
+}
+
+/* --- Product List --- */
+.products-container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 16px;
+}
+
+ul.products {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+ul.products li {
+  background: #fff;
+  border: 1px solid #e0d9ce;
+  color: var(--dark-text);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+ul.products li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+ul.products li h3 {
+  margin: 0 0 12px 0;
+  text-align: left;
+  font-size: 1.1em;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.product-thumb {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.product-thumb img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.product-details {
+    margin-top: auto; /* Pushes details to the bottom */
+}
+
+.product-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--dark-text);
+    margin-bottom: 12px;
+}
+
+/* --- Buttons --- */
+button, .button, .add_to_cart {
+  background-color: var(--cta-color);
+  min-width: 100px;
+  border: none;
+  padding: 10px 16px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+.add_to_cart {
+  width: 100%;
+}
+button:hover, .button:hover, .add_to_cart:hover {
+  background-color: #006958; /* Darker CTA for hover */
+}
+
+
+/* --- Shopping Cart & Tables --- */
+.cart-view-table-back {
+  max-width: 900px;
+  background-color: #fff;
+  margin: 30px auto;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  border: 1px solid #e0d9ce;
+  border-radius: 12px;
+}
+.cart-view-table-back table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.cart-view-table-back th, .cart-view-table-back td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0d9ce;
+}
+
+.cart-view-table-back table thead {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+}
+.cart-view-table-back table thead th {
+    border-bottom: none;
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 800px) {
+  .nav-toggle {
+    display: block;
+  }
+  .main-nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 70px; /* Match header height */
+    background: var(--primary-color);
+    transform-origin: top;
+    display: block;
+    padding: 12px 16px;
+    border-top: 1px solid var(--accent-color);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+  }
+  .main-nav.open {
+    max-height: 420px;
+  }
+  .nav-list {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .search-form {
+    width: 100%;
+    margin-top: 10px;
+  }
+  .auth-links {
+    width: 100%;
+    margin-top: 8px;
+    justify-content: flex-start;
+  }
+}
+
+/* Small helpers */
+.brand img {
+  height: 28px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
