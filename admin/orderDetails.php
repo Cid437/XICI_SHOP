@@ -1,63 +1,90 @@
 <?php
-// CREATE VIEW orderdetails AS SELECT o.orderinfo_id, c.lname, c.fname, c.addressline, c.town, c.zipcode, c.phone,  i.sell_price, ol.quantity, i.description, o.status FROM customer c INNER JOIN orderinfo o using(customer_id) INNER JOIN orderline ol USING (orderinfo_id) INNER JOIN item i USING(item_id);
-
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    $_SESSION['message'] = "You must be an admin to access this page.";
+    header("Location: ../user/login.php");
+    exit();
+}
+
 include('../includes/header.php');
 include('../includes/config.php');
 
 $orderId = $_GET['id'];
 $_SESSION['orderId'] = $orderId;
 
-$sql = "SELECT lname, fname, addressline, town, zipcode, phone, orderinfo_id, status FROM `orderdetails` WHERE orderinfo_id = $orderId LIMIT 1";
-$result = mysqli_query($conn, $sql);
-$customer = mysqli_fetch_assoc($result);
-echo $sql;
-$sql = "SELECT description, quantity, sell_price  FROM `orderdetails` WHERE orderinfo_id = $orderId ";
-$items = mysqli_query($conn, $sql);
 
+$sql_customer = "SELECT lname, fname, addressline, town, zipcode, phone, orderinfo_id, status FROM `orderdetails` WHERE orderinfo_id = $orderId LIMIT 1";
+$result_customer = mysqli_query($conn, $sql_customer);
+$customer = mysqli_fetch_assoc($result_customer);
+
+
+$sql_items = "SELECT description, quantity, sell_price FROM `orderdetails` WHERE orderinfo_id = $orderId";
+$items = mysqli_query($conn, $sql_items);
 ?>
-<h2><?= $customer['orderinfo_id'] ?> </h2>
-<h3><?php echo "{$customer['lname']} {$customer['fname']}" ?></h3>
-<p><?php echo "{$customer['addressline']} {$customer['town']} {$customer['zipcode']} {$customer['phone']}" ?></p>
-<table class="table table-striped table-bordered">
-    <thead>
-        <th>item name</th>
-        <th>quantity</th>
-        <th>price</th>
-        <th>total</th>
-    </thead>
 
-    <?php
-    $grandTotal = 0;
-    while ($row = mysqli_fetch_assoc($items)) {
-        $total = $row['sell_price'] * $row['quantity'];
-        $grandTotal += $total;
-        echo "<tr>";
+<div class="container" style="padding: 20px 0;">
+    <h3>Order Details: #<?php echo htmlspecialchars($customer['orderinfo_id']); ?></h3>
+    
+    <div class="card my-4">
+        <div class="card-header">
+            Customer Information
+        </div>
+        <div class="card-body">
+            <h5 class="card-title"><?php echo htmlspecialchars($customer['fname']) . ' ' . htmlspecialchars($customer['lname']); ?></h5>
+            <p class="card-text">
+                <?php echo htmlspecialchars($customer['addressline']); ?><br>
+                <?php echo htmlspecialchars($customer['town']) . ', ' . htmlspecialchars($customer['zipcode']); ?><br>
+                Phone: <?php echo htmlspecialchars($customer['phone']); ?>
+            </p>
+        </div>
+    </div>
 
-        echo "<td>{$row['description']}</td>";
-        echo "<td>{$row['quantity']} </td>";
-        echo "<td>{$row['sell_price']}</td>";
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $grandTotal = 0;
+            while ($row = mysqli_fetch_assoc($items)) :
+                $total = $row['sell_price'] * $row['quantity'];
+                $grandTotal += $total;
+            ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['description']); ?></td>
+                    <td><?php echo htmlspecialchars($row['quantity']); ?></td>
+                    <td>₱<?php echo number_format($row['sell_price'], 2); ?></td>
+                    <td>₱<?php echo number_format($total, 2); ?></td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+        <tfoot>
+            <tr class="table-info">
+                <td colspan="3" class="text-end"><strong>Grand Total:</strong></td>
+                <td><strong>₱<?php echo number_format($grandTotal, 2); ?></strong></td>
+            </tr>
+        </tfoot>
+    </table>
 
-        echo "<td>{$total}</td>";
-
-
-
-        echo "</tr>";
-    }
-    ?>
-</table>
-<h4><?= $grandTotal ?></h4>
-<form action="updateOrder.php" method="POST">
-<select class="form-select form-control" aria-label="Default select example" name="status">
-    <option selected>Open this select menu</option>
-    <option value="Processing">processing</option>
-    <option value="Delivered">delivered</option>
-    <option value="Canceled">canceled</option>
-</select>
-<button type="submit" class="btn btn-primary">update order</button>
-</form>
+    <div class="mt-4">
+        <h4>Update Order Status</h4>
+        <form action="updateOrder.php" method="POST" class="d-flex" style="max-width: 400px;">
+            <select class="form-select me-2" name="status">
+                <option selected>Choose new status...</option>
+                <option value="Processing">Processing</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Canceled">Canceled</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
+</div>
 
 <?php
-
 include('../includes/footer.php');
 ?>

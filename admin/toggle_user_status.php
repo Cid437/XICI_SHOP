@@ -1,17 +1,15 @@
 <?php
-// Toggle a user's is_active status safely using prepared statements
 session_start();
 include_once __DIR__ . '/../includes/config.php';
 
-// Helper to redirect back to the users list
-function redirect_back() {
+function redirect_back()
+{
     header('Location: users.php');
     exit;
 }
 
-// CORRECTED: Check for 'userId' from GET
 if (!isset($_GET['userId'])) {
-    $_SESSION['message'] = 'Missing user ID'; // Changed to message for alert.php
+    $_SESSION['message'] = 'Missing user ID';
     redirect_back();
 }
 
@@ -21,8 +19,6 @@ if ($userId <= 0) {
     redirect_back();
 }
 
-// Fetch current is_active value using a prepared statement
-// CORRECTED: Use 'userId' in WHERE clause
 $selectSql = "SELECT is_active FROM users WHERE userId = ? LIMIT 1";
 if ($stmt = mysqli_prepare($conn, $selectSql)) {
     mysqli_stmt_bind_param($stmt, 'i', $userId);
@@ -39,11 +35,8 @@ if ($stmt = mysqli_prepare($conn, $selectSql)) {
     redirect_back();
 }
 
-// New status is the opposite of the current one
 $newStatus = ($isActive == 1) ? 0 : 1;
 
-// Update using a prepared statement
-// CORRECTED: Use 'userId' in WHERE clause
 $updateSql = "UPDATE users SET is_active = ? WHERE userId = ?";
 if ($ustmt = mysqli_prepare($conn, $updateSql)) {
     mysqli_stmt_bind_param($ustmt, 'ii', $newStatus, $userId);
@@ -59,4 +52,3 @@ if ($ustmt = mysqli_prepare($conn, $updateSql)) {
 }
 
 redirect_back();
-?>

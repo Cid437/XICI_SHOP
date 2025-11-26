@@ -1,56 +1,41 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    $_SESSION['message'] = "You must be an admin to access this page.";
+    header("Location: ../user/login.php");
+    exit();
+}
 
-// header for admin pages (adjust path if you use a different header file)
-include __DIR__ . '/../includes/adminHeader.php';
-// DB config - make sure this file defines $conn (mysqli connection)
+include __DIR__ . '/../includes/header.php';
 include __DIR__ . '/../includes/config.php';
 
-// Debug (optional)
-// print_r($_SESSION);
-
-// Access control (uncomment to enforce login)
-// if (!isset($_SESSION['user_id'])) {
-//     $_SESSION['message'] = "please Login to access the page";
-//     header("Location: ../user/login.php" );
-//     exit;
-// }
-
-$keyword = '';
-if (isset($_GET['search'])) {
-    $keyword = strtolower(trim($_GET['search']));
-}
-
-if ($keyword !== '') {
-    // escape input for safety
-    $safe = mysqli_real_escape_string($conn, $keyword);
-    $sql = "SELECT * FROM item LEFT JOIN stock USING (item_id) WHERE LOWER(description) LIKE '%{$safe}%'";
-} else {
-    $sql = "SELECT * FROM item LEFT JOIN stock USING (item_id)";
-}
+$sql = "SELECT 
+            i.item_id, i.description, i.category, i.cost_price, i.sell_price,
+            s.quantity,
+            MIN(ii.image_path) AS first_image
+        FROM item i
+        LEFT JOIN stock s ON i.item_id = s.item_id
+        LEFT JOIN item_images ii ON i.item_id = ii.item_id
+        GROUP BY i.item_id 
+        ORDER BY i.item_id DESC";
 
 $result = mysqli_query($conn, $sql);
-if ($result === false) {
-    // simple error handling
-    $err = mysqli_error($conn);
-    echo "<div class='container'><p style='color:red'>Database error: " . htmlspecialchars($err) . "</p></div>";
-    include __DIR__ . '/../includes/footer.php';
-    exit;
-}
-
 $itemCount = mysqli_num_rows($result);
 ?>
 
-<div class="container" style="padding:18px">
+<div class="container" style="padding:18px; max-width: 1200px; display: block;">
+    <?php include('../includes/alert.php'); ?>
+    
     <p><a href="create.php" class="btn btn-primary">Add Item</a></p>
-    <h2>Number of items: <?php echo $itemCount; ?></h2>
+    <h2>Item Management (<?php echo $itemCount; ?> items)</h2>
 
-    <table class="table" style="width:100%;border-collapse:collapse;margin-top:12px">
+    <table class="table table-striped" style="width:100%; margin-top:12px;">
         <thead>
-            <tr style="text-align:left;border-bottom:1px solid rgba(0,0,0,0.06);">
+            <tr>
                 <th>Image</th>
                 <th>ID</th>
                 <th>Description</th>
+                <th>Category</th>
                 <th>Sell Price</th>
                 <th>Cost Price</th>
                 <th>Quantity</th>
@@ -58,31 +43,31 @@ $itemCount = mysqli_num_rows($result);
             </tr>
         </thead>
         <tbody>
-        <?php
-        while ($row = mysqli_fetch_assoc($result)) {
-            $img = htmlspecialchars($row['img_path'] ?? '');
-            $id = htmlspecialchars($row['item_id'] ?? '');
-            $desc = htmlspecialchars($row['description'] ?? '');
-            $sell = isset($row['sell_price']) ? number_format((float)$row['sell_price'], 2) : '';
-            $cost = isset($row['cost_price']) ? number_format((float)$row['cost_price'], 2) : '';
-            $qty = htmlspecialchars($row['quantity'] ?? '0');
+            <?php
+            while ($row = mysqli_fetch_assoc($result)) {
+                $img = htmlspecialchars($row['first_image'] ?? 'images/placeholder.png');
+                $id = htmlspecialchars($row['item_id']);
+                $desc = htmlspecialchars($row['description']);
+                $category = htmlspecialchars($row['category']);
+                $sell = number_format((float)$row['sell_price'], 2);
+                $cost = number_format((float)$row['cost_price'], 2);
+                $qty = htmlspecialchars($row['quantity'] ?? '0');
 
-            echo "<tr style='border-bottom:1px solid rgba(0,0,0,0.04)'>";
-            echo "<td><img src='{$img}' alt='" . $desc . "' style='width:120px;height:120px;object-fit:cover;border-radius:6px' /></td>";
-            echo "<td>{$id}</td>";
-            echo "<td>{$desc}</td>";
-            echo "<td>₱{$sell}</td>";
-            echo "<td>₱{$cost}</td>";
-            echo "<td>{$qty}</td>";
-
-            $edit = 'edit.php?id=' . urlencode($row['item_id']);
-            $del = 'delete.php?id=' . urlencode($row['item_id']);
-
-            echo "<td><a href='{$edit}' title='Edit'><i class='fa-regular fa-pen-to-square' style='color: #8f5538; margin-right:8px'></i></a>";
-            echo "<a href='{$del}' title='Delete' onclick=\"return confirm('Delete item #{$id}?')\"><i class='fa-solid fa-trash' style='color: #a33'></i></a></td>";
-            echo "</tr>";
-        }
-        ?>
+                echo "<tr style='vertical-align: middle;'>";
+                echo "<td><img src='../item/{$img}' alt='{$desc}' style='width:100px;height:100px;object-fit:cover;border-radius:6px' /></td>";
+                echo "<td>{$id}</td>";
+                echo "<td>{$desc}</td>";
+                echo "<td>{$category}</td>";
+                echo "<td>₱{$sell}</td>";
+                echo "<td>₱{$cost}</td>";
+                echo "<td>{$qty}</td>";
+                echo "<td>";
+                echo "<a href='edit.php?id={$id}' title='Edit'><i class='fa-regular fa-pen-to-square' style='font-size: 1.2rem; color: #8f5538; margin-right:8px'></i></a>";
+                echo "<a href='delete.php?id={$id}' title='Delete' onclick=\"return confirm('Delete item #{$id}?')\"><i class='fa-solid fa-trash' style='font-size: 1.2rem; color: #a33'></i></a>";
+                echo "</td>";
+                echo "</tr>";
+            }
+            ?>
         </tbody>
     </table>
 </div>

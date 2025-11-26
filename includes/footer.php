@@ -1,13 +1,18 @@
 <footer class="site-footer">
-    <div class="container">
-        <div class="footer-info">
-            &copy; <?php echo date('Y'); ?> Harmony Hub. All Rights Reserved.
+    <div class="footer-content">
+        
+        <div class="footer-logo">
+            <img src="/XiCiTest1/images/xici-logo.png" alt="XiCi Instruments Logo">
         </div>
-        <div class="footer-social">
-            <a href="#" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-            <a href="#" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
-            <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        
+        <div class="footer-copyright">
+            &copy; <?php echo date('Y'); ?> XiCi Instruments. All rights reserved.
         </div>
+        
+        <div class="footer-tagline">
+            Your Source for Quality Instruments.
+        </div>
+        
     </div>
 </footer>
 
