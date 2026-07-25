@@ -10,8 +10,6 @@ include('../includes/header.php');
 include('../includes/config.php');
 
 $orderId = $_GET['id'];
-$_SESSION['orderId'] = $orderId;
-
 
 $sql_customer = "SELECT lname, fname, addressline, town, zipcode, phone, orderinfo_id, status FROM `orderdetails` WHERE orderinfo_id = $orderId LIMIT 1";
 $result_customer = mysqli_query($conn, $sql_customer);
@@ -73,9 +71,10 @@ $items = mysqli_query($conn, $sql_items);
 
     <div class="mt-4">
         <h4>Update Order Status</h4>
-        <form action="updateOrder.php" method="POST" class="d-flex" style="max-width: 400px;">
-            <select class="form-select me-2" name="status">
-                <option selected>Choose new status...</option>
+        <form action="updateorder.php" method="POST" class="d-flex" style="max-width: 400px;">
+            <input type="hidden" name="orderId" value="<?php echo $orderId; ?>">
+            <select class="form-select me-2" name="status" required>
+                <option value="">Choose new status...</option>
                 <option value="Processing">Processing</option>
                 <option value="Delivered">Delivered</option>
                 <option value="Canceled">Canceled</option>

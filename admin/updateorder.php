@@ -7,8 +7,14 @@ use PHPMailer\PHPMailer\Exception;
 
 require '../vendor/autoload.php';
 
+if (!isset($_POST['status'], $_POST['orderId'])) {
+    $_SESSION['message'] = "Invalid request.";
+    header("Location: orders.php");
+    exit();
+}
+
 $status = $_POST['status'];
-$orderId = $_SESSION['orderId'];
+$orderId = $_POST['orderId'];
 
 $sql = "UPDATE orderinfo SET status = ? WHERE orderinfo_id = ?";
 $stmt = mysqli_prepare($conn, $sql);
