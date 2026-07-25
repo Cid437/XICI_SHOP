@@ -2,7 +2,7 @@
     <div class="footer-content">
         
         <div class="footer-logo">
-            <img src="/XiCiTest1/images/xici-logo.png" alt="XiCi Instruments Logo">
+            <img src="/images/xici-logo.png" alt="XiCi Instruments Logo">
         </div>
         
         <div class="footer-copyright">
