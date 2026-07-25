@@ -1,10 +1,19 @@
-<?php 
-$db_host = "localhost";
-$db_username = "root";
-$db_passwd = "";
+<?php
 
-$conn = mysqli_connect($db_host, $db_username, $db_passwd) or die("Could not connect!\n");
+$host = getenv("DB_HOST");
+$user = getenv("DB_USER");
+$password = getenv("DB_PASSWORD");
+$db = getenv("DB_NAME");
 
-$db_name = "db_sales";
-mysqli_select_db($conn, $db_name) or die("Could not select the database $dbname!\n". mysqli_error($conn));
+$conn = mysqli_connect(
+    $host,
+    $user,
+    $password,
+    $db
+);
+
+if (!$conn) {
+    die("Database connection failed");
+}
+
 ?>
