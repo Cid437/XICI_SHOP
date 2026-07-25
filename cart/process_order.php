@@ -35,7 +35,7 @@ try {
     }
 
     $shipping_fee = 50.00;
-    $sql_orderinfo = 'INSERT INTO orderinfo(customer_id, date_placed, shipping, shipping_address_id, status) VALUES (?, NOW(), ?, ?, "Processing")';
+    $sql_orderinfo = 'INSERT INTO orderinfo(customer_id, date_placed, shipping, shipping_address_id) VALUES (?, NOW(), ?, ?)';
     $stmt_orderinfo = mysqli_prepare($conn, $sql_orderinfo);
     mysqli_stmt_bind_param($stmt_orderinfo, 'idi', $customer_id, $shipping_fee, $selected_address_id);
     mysqli_stmt_execute($stmt_orderinfo);
